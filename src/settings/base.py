@@ -37,6 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'helpers.director',
+    'helpers.case.jb_admin',
+    'helpers.authuser',
+    'hello',
+    'dinner'
 ]
 
 MIDDLEWARE = [
@@ -47,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'helpers.director.middleware.request_cache.RequestCacheMiddleware'
 ]
 
 ROOT_URLCONF = 'urls'
