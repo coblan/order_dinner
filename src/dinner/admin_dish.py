@@ -1,5 +1,5 @@
 from helpers.director.shortcut import TablePage,ModelTable,ModelFields,director,page_dc
-from .models import Dish,DishRes,ResourceType
+from .models import Dish,DishRes,ResourceType,KeyWord
 from django.db.models import Sum,Count
 from . admin_res import ResPage
 
@@ -34,7 +34,7 @@ class DishPage(TablePage):
         
         def getExtraHead(self):
             return [
-                {'name':'res_count','label':'原料','editor':'com-table-switch-to-tab','ctx_name':'dish.table','tab_name':'res'}
+                {'name':'res_count','label':'原料数','editor':'com-table-switch-to-tab','ctx_name':'dish.table','tab_name':'res'}
             ]
         
         def inn_filter(self, query):
@@ -50,47 +50,27 @@ class DishForm(ModelFields):
     class Meta:
         model = Dish
         exclude =[]
-        
+    
+    def dict_head(self, head):
+        if head['name'] =='price':
+            head['suffix'] = '元'
+        if head['name'] =='key_word':
+            head['editor'] = 'com-field-split-text'
+            head['options'] = [{'value':x.content,'label':x.content} for x in KeyWord.objects.all()]
+        return head
+    
     def dict_row(self, inst):
         return {
             'res_count':inst.dishres_set.count()
         }
     
-    #def getExtraHeads(self):
-        #return [
-            #{'name':'used_resource',
-             #'editor':'com-field-table-list',
-             #'label':'消耗原料',
-            #'table_heads':[
-                #{'name':'res','label':'原料','editor':'com-table-pop-fields-local','inn_editor':'com-table-label-shower'},
-                #{'name':'amount','label':'数量','editor':'com-table-span'},
-            #],
-            #'fields_heads':[
-                #{'name':'res','label':'原料','editor':'com-field-pop-table-select',
-                 #'table_ctx':ResPicker().get_head_context(),
-                 ##'after_select':'scope.row.res=scope.selected_row . ex.vueAssign(scope.row,scope.selected_row);',
-                 #'options':[]},
-                #{'name':'amount','label':'数量','editor':'com-field-number'},
-            #]}
-        #]
-    
-    #def save_form(self):
-        #pass
-    
-    #def after_save(self):
-        #used_resource = self.kw.get('used_resource')
-        #for res in used_resource:
-            #DishRes.
-
-
-
 class ResPicker(ResPage.tableCls):
     
     def dict_head(self, head):
         head = super().dict_head(head)
         if head['name'] =='label':
             head['editor'] ='com-table-click'
-            head['action']='delete scope.row._director_name;delete scope.row.pk;scope.ps.vc.$emit("finish",scope.row)'
+            head['action']='scope.ps.vc.$emit("finish",scope.row)'
         return head
 
 class DishResTab(ModelTable):
@@ -128,6 +108,15 @@ class DishResForm(ModelFields):
     class Meta:
         model = DishRes
         exclude = []
+    
+    def dict_head(self, head):
+        if head['name'] =='res':
+            head.update({
+                'editor':'com-field-pop-table-select',
+                'table_ctx':ResPicker().get_head_context(),
+                'options':[]
+            })
+        return head
         
 director.update({
     'dish':DishPage.tableCls,

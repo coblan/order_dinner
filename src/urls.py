@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url,include
 #from django.contrib import admin
-from hello.engin_menu import PcMenu
+from hello.engin_menu import PcMenu,MBpageEngine
 from django.views.generic import RedirectView 
 from helpers.authuser.engin_view import AuthEngine
 from helpers.director.views import director_view
@@ -29,7 +29,8 @@ urlpatterns = [
     url(r'^d/',include('helpers.director.urls'),name='director'),
     url(r'^dapi/(?P<director_name>[\w\/\.-]+)?/?$',director_view),
     #url(r'^pc/?$',RedirectView.as_view(url='/pc/jobinfo')) ,
-    url(r'^$',RedirectView.as_view(url='/pc/dish')) ,
+    url(r'^mb/([\w\.]+)/?$',MBpageEngine.as_view(),name=MBpageEngine.url_name),
+    url(r'^$',RedirectView.as_view(url='/pc/res')) ,
 ]
 
 if settings.DEBUG:

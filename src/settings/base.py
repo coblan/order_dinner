@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'helpers.director',
     'helpers.case.jb_admin',
     'helpers.authuser',
+    'helpers.mobile',
     'hello',
     'dinner'
 ]
